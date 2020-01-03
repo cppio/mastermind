@@ -9,7 +9,11 @@ fn main() {
     let mut guesser = CodeGuesser::new();
 
     for guesses in 1.. {
-        println!("Guess: {:01$}", u32::from(guesser.guess()), code::PEGS as usize);
+        println!(
+            "Guess: {:01$}",
+            u32::from(guesser.guess()),
+            code::PEGS as usize,
+        );
 
         let mut buf = String::new();
         io::stdin().read_line(&mut buf).unwrap();
@@ -22,6 +26,9 @@ fn main() {
             break;
         }
 
-        guesser.filter(reply);
+        if guesser.filter(reply) == None {
+            println!("Impossible!");
+            break;
+        }
     }
 }

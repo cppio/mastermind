@@ -1,4 +1,4 @@
-use super::code::Code;
+use super::code::{Code, COLORS, PEGS};
 
 use std::mem;
 
@@ -14,11 +14,16 @@ impl CodeGuesser {
     }
 
     fn consistent(&self, code: &Code) -> bool {
-        self.1.iter().all(|(prev_code, prev_reply)| prev_code.compare(code) == *prev_reply)
+        self.1
+            .iter()
+            .all(|(prev_code, prev_reply)| prev_code.compare(code) == *prev_reply)
     }
 
-    pub fn filter(&mut self, reply: (u8, u8)) {
-        let guess = (u32::from(&self.0)..).map(Code::from).find(|code| self.0.compare(code) == reply && self.consistent(code)).unwrap();
+    pub fn filter(&mut self, reply: (u8, u8)) -> Option<()> {
+        let guess = (u32::from(&self.0)..COLORS.pow(PEGS as u32))
+            .map(Code::from)
+            .find(|code| self.0.compare(code) == reply && self.consistent(code))?;
         self.1.push((mem::replace(&mut self.0, guess), reply));
+        Some(())
     }
 }
